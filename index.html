@@ -1,3 +1,861 @@
-<html>
-placeholder
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Unlearn STEM — Build an Unshakable Foundation</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink:    #0d0d0d;
+      --paper:  #f5f0e8;
+      --cream:  #ede7d9;
+      --accent: #c8472b;
+      --gold:   #c9973a;
+      --rule:   #d4c9b4;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--paper);
+      color: var(--ink);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── noise texture overlay ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 9999;
+      opacity: 0.5;
+    }
+
+    .serif { font-family: 'Playfair Display', serif; }
+    .mono  { font-family: 'DM Mono', monospace; }
+
+    /* ── hero ── */
+    #hero {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      border-bottom: 1.5px solid var(--rule);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(var(--rule) 1px, transparent 1px),
+        linear-gradient(90deg, var(--rule) 1px, transparent 1px);
+      background-size: 48px 48px;
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .hero-circle {
+      position: absolute;
+      right: -120px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 540px;
+      height: 540px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 40% 40%, #c9973a22 0%, #c8472b18 60%, transparent 80%);
+      border: 1.5px solid var(--rule);
+      pointer-events: none;
+    }
+
+    nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 3rem;
+      border-bottom: 1.5px solid var(--rule);
+      position: relative;
+      z-index: 10;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .logo span { color: var(--accent); }
+
+    nav a {
+      font-size: 0.8rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--ink);
+      text-decoration: none;
+      opacity: 0.6;
+      transition: opacity 0.2s;
+    }
+    nav a:hover { opacity: 1; }
+
+    .hero-body {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 4rem 3rem 3rem;
+      position: relative;
+      z-index: 10;
+      max-width: 860px;
+    }
+
+    .eyebrow {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 2rem;
+      height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(3.2rem, 7vw, 6.5rem);
+      line-height: 1.0;
+      letter-spacing: -0.03em;
+      margin-bottom: 2rem;
+    }
+
+    h1 em {
+      font-style: italic;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      max-width: 520px;
+      font-size: 1.05rem;
+      line-height: 1.75;
+      opacity: 0.72;
+      margin-bottom: 2.5rem;
+    }
+
+    .cta-row {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      padding: 0.85rem 2.2rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-primary:hover { background: #a83520; transform: translateY(-1px); }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--ink);
+      padding: 0.85rem 2.2rem;
+      font-size: 0.82rem;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      text-decoration: none;
+      border: 1.5px solid var(--ink);
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .btn-outline:hover { background: var(--ink); color: var(--paper); }
+
+    .hero-footer {
+      padding: 1.5rem 3rem;
+      border-top: 1.5px solid var(--rule);
+      display: flex;
+      gap: 3rem;
+      position: relative;
+      z-index: 10;
+      flex-wrap: wrap;
+    }
+
+    .stat {
+      display: flex;
+      flex-direction: column;
+    }
+    .stat-num {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 2rem;
+      line-height: 1;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      opacity: 0.55;
+      margin-top: 0.2rem;
+    }
+
+    /* ── section commons ── */
+    section {
+      padding: 6rem 3rem;
+      border-bottom: 1.5px solid var(--rule);
+    }
+
+    .section-label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.45;
+      margin-bottom: 3rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--rule);
+    }
+
+    h2 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.1;
+      letter-spacing: -0.025em;
+      margin-bottom: 1.5rem;
+    }
+
+    /* ── philosophy ── */
+    #philosophy .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: start;
+    }
+
+    .principle {
+      padding: 2rem;
+      border: 1.5px solid var(--rule);
+      background: var(--cream);
+      position: relative;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .principle:hover { border-color: var(--gold); transform: translateY(-3px); }
+
+    .principle-num {
+      font-family: 'Playfair Display', serif;
+      font-weight: 900;
+      font-size: 3.5rem;
+      line-height: 1;
+      color: var(--rule);
+      position: absolute;
+      top: 1rem;
+      right: 1.25rem;
+    }
+
+    .principle h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .principle p {
+      font-size: 0.9rem;
+      line-height: 1.7;
+      opacity: 0.7;
+    }
+
+    /* ── credentials ── */
+    #credentials {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    #credentials .section-label { color: var(--paper); }
+    #credentials .section-label::after { background: #333; }
+
+    .cred-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 0;
+    }
+
+    .cred-item {
+      padding: 2.5rem 2rem;
+      border: 1px solid #222;
+      position: relative;
+      transition: background 0.2s;
+    }
+    .cred-item:hover { background: #161616; }
+
+    .cred-icon {
+      font-size: 1.6rem;
+      margin-bottom: 1rem;
+    }
+
+    .cred-item h3 {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.05rem;
+      margin-bottom: 0.5rem;
+      color: var(--gold);
+    }
+
+    .cred-item p {
+      font-size: 0.85rem;
+      line-height: 1.65;
+      opacity: 0.6;
+    }
+
+    /* ── schedule ── */
+    .schedule-card {
+      background: var(--cream);
+      border: 1.5px solid var(--rule);
+      padding: 2rem 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .schedule-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+
+    .day-badge {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      background: var(--accent);
+      color: #fff;
+      padding: 0.2rem 0.6rem;
+      display: inline-block;
+      width: fit-content;
+    }
+
+    .time-block {
+      font-family: 'Playfair Display', serif;
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+    }
+
+    .time-note {
+      font-size: 0.8rem;
+      opacity: 0.55;
+    }
+
+    /* ── videos ── */
+    #videos {
+      background: var(--cream);
+    }
+
+    .video-wrap {
+      width: 100%;
+      border: 1.5px solid var(--rule);
+      background: #111;
+      overflow: hidden;
+    }
+
+    video {
+      width: 100%;
+      display: block;
+      max-height: 400px;
+      object-fit: contain;
+      background: #111;
+    }
+
+    .video-caption {
+      padding: 1rem 1.25rem;
+      background: var(--ink);
+      color: var(--paper);
+      font-size: 0.78rem;
+      letter-spacing: 0.06em;
+      opacity: 0.9;
+    }
+
+    /* ── testimonials ── */
+    .testimonial {
+      border-left: 3px solid var(--accent);
+      padding: 1.75rem 2rem;
+      background: var(--cream);
+      margin-bottom: 0;
+      position: relative;
+      transition: transform 0.2s;
+    }
+    .testimonial:hover { transform: translateX(4px); }
+
+    .testimonial::before {
+      content: '\201C';
+      font-family: 'Playfair Display', serif;
+      font-size: 5rem;
+      line-height: 1;
+      color: var(--rule);
+      position: absolute;
+      top: 0.5rem;
+      right: 1.25rem;
+      pointer-events: none;
+    }
+
+    .testimonial p {
+      font-size: 0.92rem;
+      line-height: 1.75;
+      opacity: 0.78;
+      margin-bottom: 1rem;
+    }
+
+    .testimonial .name {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 500;
+    }
+
+    /* ── contact ── */
+    #contact {
+      background: var(--ink);
+      color: var(--paper);
+    }
+
+    #contact h2 { color: var(--paper); }
+    #contact .section-label { color: var(--paper); }
+    #contact .section-label::after { background: #333; }
+
+    .contact-box {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 4rem;
+      align-items: center;
+    }
+
+    .contact-detail {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    .contact-item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.3rem;
+    }
+
+    .contact-item .label {
+      font-family: 'DM Mono', monospace;
+      font-size: 0.65rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.4;
+    }
+
+    .contact-item .value {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .contact-item a {
+      color: var(--gold);
+      text-decoration: none;
+    }
+    .contact-item a:hover { text-decoration: underline; }
+
+    .contact-right p {
+      font-size: 0.95rem;
+      line-height: 1.8;
+      opacity: 0.6;
+      margin-bottom: 2rem;
+    }
+
+    /* ── footer ── */
+    footer {
+      padding: 2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+      border-top: 1.5px solid var(--rule);
+    }
+
+    footer p {
+      font-size: 0.75rem;
+      opacity: 0.4;
+      letter-spacing: 0.06em;
+    }
+
+    /* ── animations ── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+
+    /* ── responsive ── */
+    @media (max-width: 768px) {
+      nav { padding: 1.25rem 1.5rem; }
+      .hero-body { padding: 3rem 1.5rem 2rem; }
+      .hero-footer { padding: 1.5rem; gap: 2rem; }
+      section { padding: 4rem 1.5rem; }
+      #philosophy .columns { grid-template-columns: 1fr; gap: 1.5rem; }
+      .contact-box { grid-template-columns: 1fr; gap: 2.5rem; }
+      .hero-circle { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ══════════════════════════════
+       HERO
+  ══════════════════════════════ -->
+  <section id="hero" style="padding:0; border-bottom: 1.5px solid var(--rule);">
+    <div class="hero-grid-bg"></div>
+    <div class="hero-circle"></div>
+
+    <nav>
+      <div class="logo">Unlearn <span>STEM</span></div>
+      <div style="display:flex; gap:2rem; align-items:center;">
+        <a href="#philosophy">Philosophy</a>
+        <a href="#schedule">Schedule</a>
+        <a href="#testimonials">Reviews</a>
+        <a href="#contact" style="opacity:1; background:var(--accent); color:#fff; padding:0.5rem 1.2rem; letter-spacing:0.1em; font-size:0.75rem;">Get Started</a>
+      </div>
+    </nav>
+
+    <div class="hero-body">
+      <div class="eyebrow">Weekend STEM Tutoring · Canada</div>
+      <h1>Don't just <em>learn</em><br/>it. Own it.</h1>
+      <p class="hero-sub">
+        Most students memorize formulas and forget them. Unlearn STEM builds the kind of understanding that makes senior high school and early university feel manageable — because the foundation is unshakable.
+      </p>
+      <div class="cta-row">
+        <a href="#contact" class="btn-primary">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          Call or Text to Enrol
+        </a>
+        <a href="#videos" class="btn-outline">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Watch Me Teach
+        </a>
+      </div>
+    </div>
+
+    <div class="hero-footer">
+      <div class="stat">
+        <span class="stat-num">9+</span>
+        <span class="stat-label">Years Teaching STEM</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">100%</span>
+        <span class="stat-label">Score — 2 of 3 Core Uni Courses</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">UBC</span>
+        <span class="stat-label">International Merit Scholar</span>
+      </div>
+      <div class="stat">
+        <span class="stat-num">∞</span>
+        <span class="stat-label">Free Office Hours</span>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       PHILOSOPHY
+  ══════════════════════════════ -->
+  <section id="philosophy">
+    <div class="section-label">The Approach</div>
+    <div class="#philosophy .columns" style="display:grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items:start;">
+      <div>
+        <h2>Why "Unlearn"?</h2>
+        <p style="font-size:0.95rem; line-height:1.8; opacity:0.7; margin-bottom:1.5rem;">
+          Because most students have been taught to chase marks, not understanding. Before we can build something solid, we have to let go of the shortcut habits — the formula plugging, the rote copying, the panic cramming.
+        </p>
+        <p style="font-size:0.95rem; line-height:1.8; opacity:0.7;">
+          Then we rebuild from the ground up. Stronger, deeper. A student who truly understands the <em>why</em> behind Grade 10 physics will sail through Grade 12. That's the whole idea.
+        </p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:1.25rem;">
+        <div class="principle fade-in">
+          <span class="principle-num">01</span>
+          <h3>Foundation First</h3>
+          <p>We never skip the basics. Every advanced concept is only as strong as what it stands on. We take the time to make the base rock-solid.</p>
+        </div>
+        <div class="principle fade-in">
+          <span class="principle-num">02</span>
+          <h3>Teach to Fish</h3>
+          <p>I don't hand out answers. I work alongside students until they can solve problems independently — that confidence sticks long after class ends.</p>
+        </div>
+        <div class="principle fade-in">
+          <span class="principle-num">03</span>
+          <h3>Real-World Anchors</h3>
+          <p>Abstract formulas become obvious when you can see them in the world. Every lesson ties theory to something tangible you can hold onto.</p>
+        </div>
+        <div class="principle fade-in">
+          <span class="principle-num">04</span>
+          <h3>Personalized Pace</h3>
+          <p>No two students learn the same way. Sessions are adapted to how you think — not pushed through a fixed script.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       CREDENTIALS
+  ══════════════════════════════ -->
+  <section id="credentials" style="padding: 6rem 3rem;">
+    <div class="section-label">Credentials</div>
+    <h2 style="max-width:640px; margin-bottom: 3.5rem;">Taught by someone who's been at every level of this system — and mastered it.</h2>
+    <div class="cred-grid">
+      <div class="cred-item fade-in">
+        <div class="cred-icon">🏛️</div>
+        <h3>UBC International Merit Scholar</h3>
+        <p>Fully funded, merit-based scholarship covering tuition, housing, food, academic resources, technology, travel, and more — no strings attached.</p>
+      </div>
+      <div class="cred-item fade-in">
+        <div class="cred-icon">💯</div>
+        <h3>Perfect Scores in Core Sciences</h3>
+        <p>100% in Mathematics, Physics, and Chemistry in Grade 10. 100% in 2 of 3 mandatory university-level courses. This isn't luck — it's method.</p>
+      </div>
+      <div class="cred-item fade-in">
+        <div class="cred-icon">📚</div>
+        <h3>9+ Years in the Classroom</h3>
+        <p>From one-on-one tutoring to structured group sessions, across school levels and university courses in STEM subjects.</p>
+      </div>
+      <div class="cred-item fade-in">
+        <div class="cred-icon">🌐</div>
+        <h3>Indic AI · Verified Tutor</h3>
+        <p>Recognized on the Indic AI tutoring platform, with student feedback that consistently highlights clarity, patience, and measurable improvement.</p>
+      </div>
+      <div class="cred-item fade-in">
+        <div class="cred-icon">🧩</div>
+        <h3>Problem-Solving Methodology</h3>
+        <p>Not just teaching what — teaching how to think. Students leave sessions with strategies they can apply to questions they've never seen before.</p>
+      </div>
+      <div class="cred-item fade-in">
+        <div class="cred-icon">🤝</div>
+        <h3>Student-Centered Sessions</h3>
+        <p>Every session is guided by where the student is, not where a textbook says they should be. Personalized, adaptive, and respectful of your time.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       SCHEDULE
+  ══════════════════════════════ -->
+  <section id="schedule">
+    <div class="section-label">Schedule</div>
+    <h2 style="margin-bottom:0.75rem;">Weekend classes,<br/>zero excuses to miss.</h2>
+    <p style="font-size:0.9rem; opacity:0.55; margin-bottom: 3rem; max-width:480px;">Classes run every Saturday and Sunday morning. Office hours follow immediately — drop in anytime for questions, review, or focused study time. No extra charge.</p>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap:1.5rem; max-width:900px;">
+      <div class="schedule-card fade-in">
+        <span class="day-badge">Saturday</span>
+        <div class="time-block">10:00 – 12:00</div>
+        <div class="time-note">Core session · 2 hours</div>
+        <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--rule); font-size:0.82rem; opacity:0.6;">Followed by free office hours</div>
+      </div>
+      <div class="schedule-card fade-in">
+        <span class="day-badge">Sunday</span>
+        <div class="time-block">10:00 – 12:00</div>
+        <div class="time-note">Core session · 2 hours</div>
+        <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--rule); font-size:0.82rem; opacity:0.6;">Followed by free office hours</div>
+      </div>
+      <div class="schedule-card fade-in" style="border-color: var(--gold);">
+        <span class="day-badge" style="background:var(--gold);">Office Hours</span>
+        <div class="time-block" style="color:var(--gold);">Free</div>
+        <div class="time-note">After every class · Sat & Sun</div>
+        <div style="margin-top:1rem; padding-top:1rem; border-top:1px solid var(--rule); font-size:0.82rem; opacity:0.6;">Drop in for doubts, review, or extra practice. Completely complementary.</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       VIDEOS
+  ══════════════════════════════ -->
+  <section id="videos" style="background:var(--cream);">
+    <div class="section-label">See It in Action</div>
+    <h2 style="margin-bottom:0.75rem;">Watch how I explain things.</h2>
+    <p style="font-size:0.9rem; opacity:0.55; margin-bottom:3rem; max-width:480px;">
+      The best way to know if a teaching style works for you is to see it. Here are two sample explanations — real, unscripted problem-solving.
+    </p>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap:2rem; max-width:1100px;">
+      <div>
+        <div class="video-wrap fade-in">
+          <video controls preload="metadata">
+            <source src="1.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-caption">Session Sample #1 — Concept Breakdown</div>
+        </div>
+      </div>
+      <div>
+        <div class="video-wrap fade-in">
+          <video controls preload="metadata">
+            <source src="2.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+          <div class="video-caption">Session Sample #2 — Problem-Solving Walkthrough</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       TESTIMONIALS
+  ══════════════════════════════ -->
+  <section id="testimonials">
+    <div class="section-label">Student Reviews</div>
+    <h2 style="margin-bottom:3rem;">Don't take my word for it.</h2>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap:1.5rem;">
+
+      <div class="testimonial fade-in">
+        <p>Manjot Sir is an outstanding educator whose teaching skills have profoundly impacted my learning experience. His lessons are meticulously organized and captivating, seamlessly integrating theoretical knowledge with real-world examples. He has an exceptional talent for breaking down complex topics into manageable, easy-to-understand segments, ensuring that all students can grasp the material. His enthusiasm for teaching is contagious, creating an engaging and motivating classroom atmosphere. Thanks to his innovative approach and dedication, I have gained a deeper understanding and appreciation for the subject. His influence as a teacher is both inspiring and transformative.</p>
+        <div class="name">— Arun Kumar</div>
+      </div>
+
+      <div class="testimonial fade-in">
+        <p>Manjot is a great tutor! He helped me understand the fundamental concepts in one of my computer science courses. I felt that my time was being valued and it was a productive session. He does a great job at simplifying topics and then building up ideas from them. I found myself understanding more application questions by myself after just one session!</p>
+        <div class="name">— Keeran</div>
+      </div>
+
+      <div class="testimonial fade-in">
+        <p>Manjot was my student for two years, and he truly stood out. His attention to detail and ability to break down complex problems into simpler parts was remarkable. Hardworking and with the highest integrity, he not only excelled as a learner but also as a teacher. He listens to students, understands their needs, and provides personalized support. He doesn't hand out solutions — he works alongside students to help them develop real problem-solving skills, making them independent and capable. He empowers students, teaching them how to "catch a fish" rather than just handing one to them.</p>
+        <div class="name">— Rahul Khandelwal, Former Teacher</div>
+      </div>
+
+      <div class="testimonial fade-in" style="border-left-color: var(--gold); position:relative;">
+        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:1rem;">
+          <span style="font-family:'DM Mono',monospace; font-size:0.62rem; letter-spacing:0.14em; text-transform:uppercase; background:var(--gold); color:#fff; padding:0.2rem 0.6rem;">Official Letter · Sept 2020</span>
+        </div>
+        <p>On behalf of the entire team of Indic AI Foundation and our students who joined your Free Spoken English and Grammar classes, I would like to express our sincere admiration for the amazing efforts put by you. We really appreciate your 4 months of efforts with our 10 visually impaired students. Our students have personally expressed their appreciation for the one-on-one guidance and support you provided them. You have no idea how great a positive impression you have left on our students. You are truly an inspiration to all of us.</p>
+        <div class="name">— Sarita Chand, CEO · Indic AI Foundation for Social Good</div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       CONTACT
+  ══════════════════════════════ -->
+  <section id="contact" style="background:var(--ink); color:var(--paper);">
+    <div class="section-label" style="color:var(--paper);">Get In Touch</div>
+    <div class="contact-box">
+      <div class="contact-detail">
+        <h2 style="color:var(--paper);">Ready to build something solid?</h2>
+        <div class="contact-item">
+          <span class="label">Call or Text</span>
+          <!-- ⚠️ REPLACE #1: swap both the href (e.g. tel:+17781234567) and the display text -->
+          <span class="value"><a href="tel:+17783639194" style="color:var(--gold);">+1 (778) 363-9194</a></span>
+        </div>
+        <div class="contact-item">
+          <span class="label">Connect</span>
+          <!-- ⚠️ REPLACE #2: swap the href with your real LinkedIn URL -->
+          <span class="value" style="font-size:1.1rem;"><a href="https://www.linkedin.com/in/manjot-singh-b1456717b" target="_blank" rel="noopener" style="color:var(--gold);">LinkedIn Profile →</a></span>
+        </div>
+        <div class="contact-item">
+          <span class="label">Location</span>
+          <span class="value" style="font-size:1.1rem; color:var(--paper); opacity:0.75;">Canada · Online</span>
+        </div>
+      </div>
+      <div class="contact-right">
+        <p>Whether your student is struggling to keep up, wants to stay ahead, or just needs someone to make the material finally click — this is the right place to start.</p>
+        <p>Reach out by call or text. Classes run every weekend, and spots are limited to keep sessions personal and effective.</p>
+        <!-- ⚠️ REPLACE #1 again: same number as above -->
+        <a href="tel:+17783639194" class="btn-primary" style="font-size:0.85rem;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+          Call or Text to Book
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ══════════════════════════════
+       FOOTER
+  ══════════════════════════════ -->
+  <footer>
+    <div class="logo" style="font-size:1rem;">Unlearn <span style="color:var(--accent);">STEM</span></div>
+    <p>Weekend tutoring · Canada · Building unshakable foundations in STEM</p>
+    <p style="opacity:0.3;">© 2025 Unlearn STEM · Manjot</p>
+  </footer>
+
+
+  <!-- ══════════════════════════════
+       SCROLL ANIMATIONS
+  ══════════════════════════════ -->
+  <script>
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry, i) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => entry.target.classList.add('visible'), i * 80);
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+    // Smooth scroll
+    document.querySelectorAll('a[href^="#"]').forEach(a => {
+      a.addEventListener('click', e => {
+        const target = document.querySelector(a.getAttribute('href'));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+
+</body>
 </html>
